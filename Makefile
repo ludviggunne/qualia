@@ -1,5 +1,5 @@
 CXX = g++
-CFLAGS = -Wall
+CFLAGS = -Wall -std=c++11 -fmax-errors=1
 OUTPUT_DIR = build/
 
 # SOURCE FILES

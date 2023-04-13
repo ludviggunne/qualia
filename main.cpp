@@ -3,8 +3,7 @@
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
+#include "glm_config.hpp"
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
@@ -89,20 +88,20 @@ void set_canvas_vertex_data(Vertex *v, uint32_t w, uint32_t h) {
     auto cw = canvas_width(w, h, CANVAS_MARGIN, MAX_CANVAS_WIDTH);
 
     *v = {
-        { (w - cw) / 2, (h - cw) / 2 },
-        { 0.0, 1.0 }
+        glm::vec2 { (w - cw) / 2, (h - cw) / 2 },
+        glm::vec2 { 0.0, 1.0 }
     };
     *(v + 1) = {
-        { (w + cw) / 2, (h - cw) / 2 },
-        { 1.0, 1.0 }
+        glm::vec2 { (w + cw) / 2, (h - cw) / 2 },
+        glm::vec2 { 1.0, 1.0 }
     };
     *(v + 2) = {
-        { (w - cw) / 2, (h + cw) / 2 },
-        { 0.0, 0.0 }
+        glm::vec2 { (w - cw) / 2, (h + cw) / 2 },
+        glm::vec2 { 0.0, 0.0 }
     };
     *(v + 3) = {
-        { (w + cw) / 2, (h + cw) / 2 },
-        { 1.0, 0.0 }
+        glm::vec2 { (w + cw) / 2, (h + cw) / 2 },
+        glm::vec2 { 1.0, 0.0 }
     };
 }
 

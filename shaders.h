@@ -3,8 +3,7 @@
 #include <string>
 
 #include "glad/glad.h"
-#include "glm/glm.hpp"
-#include "glm/ext.hpp"
+#include "glm_config.hpp"
 #include "gl.h"
 
 std::string loadFile(const std::string &fileName);
