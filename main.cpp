@@ -25,7 +25,7 @@
 #define WINDOW_HEIGHT    600
 
 #define CANVAS_MARGIN    50
-#define MAX_CANVAS_WIDTH 4096 
+#define MAX_CANVAS_WIDTH 4096
 
 #define BIND_KEY(key, action) if (glfwGetKey(window, key) == GLFW_PRESS) { action; }
 
@@ -67,7 +67,7 @@ struct {
         center,
         rotation,
         clipping,
-        
+
         offset,
         size;
 
@@ -159,11 +159,11 @@ void dispatch_compute();
 void upscale_texture(uint32_t size) {
 
     auto tmp_size = texture_size;
-    
+
     texture_size = size;
     setup_texture(texture_size, texture_size);
     dispatch_compute();
-   
+
     texture_size = tmp_size;
     reset_tex_flag = true;
 }
@@ -211,7 +211,7 @@ void dispatch_compute() {
 
 int main(int argc, char *argv[]) {
 
-    GLFWwindow *window; 
+    GLFWwindow *window;
     create_window(&window);
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 
@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
     auto &style = ImGui::GetStyle();
     style.FrameRounding = 5.0f;
     style.WindowRounding = 5.0f;
-    
+
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 450 core");
@@ -319,7 +319,7 @@ int main(int argc, char *argv[]) {
 
     bool first_frame = true;
     while (!glfwWindowShouldClose(window)) {
-        
+
         glClearColor(clear_color.x, clear_color.y, clear_color.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -396,7 +396,7 @@ int main(int argc, char *argv[]) {
             }
 
 
-            dispatch_compute();    
+            dispatch_compute();
         }
 
         glfwPollEvents();
