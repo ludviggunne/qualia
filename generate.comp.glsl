@@ -21,51 +21,58 @@ vec4 qmul(vec4 a, vec4 b) {
         a.x * b.y + a.y * b.x + a.z * b.w - a.w * b.z,
         a.x * b.z - a.y * b.w + a.z * b.x + a.w * b.y,
         a.x * b.w + a.y * b.z - a.z * b.y + a.w * b.x
-    ); 
+    );
 }
 
 void main() {
 
     uint steps = 2 * uSize.x;
-    ivec2 coord = uOffset + ivec2(gl_GlobalInvocationID.xy);
-    if (coord.x >= uSize.x || coord.y >= uSize.y) return;
+    ivec2 coord_ = uOffset + ivec2(gl_GlobalInvocationID.xy);
+    if (coord_.x >= uSize.x || coord_.y >= uSize.y) return;
 
-    vec2 p = uCenter + (vec2(coord) / vec2(uSize) - vec2(0.5, 0.5)) * uZoom;
+    vec4 acc = vec4(0.0);
 
-    bool inc = false;
-    int depth = 0;
-    vec4 normal = vec4(0.0, 0.0, 0.0, 0.0);
-    while (depth < steps) {
+    for (int i = 0; i < 4; i++)
+    {
+        vec2 oft = vec2(float(i / 2), float(i % 2)) / 2.0;
+        vec2 p = uCenter + ((vec2(coord_) + oft) / vec2(uSize) - vec2(0.5, 0.5)) * uZoom;
+        bool inc = false;
+        int depth = 0;
+        vec4 normal = vec4(0.0, 0.0, 0.0, 0.0);
+        while (depth < steps) {
 
-        float fdepth = uClipping.x + float(depth) / float(steps) * (uClipping.y - uClipping.x);
-        vec4 _q = vec4(p.x, p.y, fdepth, uSection);
-        vec4 q = vec4(cos(uRotation) * _q.x - sin(uRotation) * _q.z, _q.y, sin(uRotation) * _q.x + cos(uRotation) * _q.z, uSection);
-        normal = q;
+            float fdepth = uClipping.x + float(depth) / float(steps) * (uClipping.y - uClipping.x);
+            vec4 _q = vec4(p.x, p.y, fdepth, uSection);
+            vec4 q = vec4(cos(uRotation) * _q.x - sin(uRotation) * _q.z, _q.y, sin(uRotation) * _q.x + cos(uRotation) * _q.z, uSection);
+            normal = q;
 
-        inc = true;
-        for (int i = 0; i < uIterations; i++) {
+            inc = true;
+            for (int i = 0; i < uIterations; i++) {
 
-            q = qmul(q, q) + uSeed;
+                q = qmul(q, q) + uSeed;
 
-            if (length(q) > 4.0) {
+                if (length(q) > 4.0) {
 
-                inc = false;
+                    inc = false;
+                    break;
+                }
+            }
+
+            if (inc == true) {
                 break;
             }
+            depth += 1;
         }
 
-        if (inc == true) {
-            break;
+        vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
+        if (inc) {
+
+            float lum = 1.0  - float(depth) / float(steps);
+            color = vec4(0.5 * (vec3(1.0, 1.0, 1.0) + normalize(normal).xyz), 1.0) * vec4(lum, lum, lum, 1.0);
         }
-        depth += 1;
+
+        acc += color;
     }
 
-    vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    if (inc) {
-
-        float lum = 1.0  - float(depth) / float(steps);
-        color = vec4(lum); //vec4(0.5 * (vec3(1.0, 1.0, 1.0) + normalize(normal).xyz), 1.0) * vec4(lum, lum, lum, 1.0); 
-    }
-
-    imageStore(imageOutput, coord, color);
+    imageStore(imageOutput, coord_, acc / 4.0);
 }
